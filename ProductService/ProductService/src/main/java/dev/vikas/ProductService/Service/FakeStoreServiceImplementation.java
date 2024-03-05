@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import dev.vikas.ProductService.DTO.RatingDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import dev.vikas.ProductService.Models.Category;
 import dev.vikas.ProductService.Models.Product;
 
 @Service
+@Primary
 public class FakeStoreServiceImplementation implements ProductService {
 
   private RestTemplateBuilder restTemplateBuilder;
@@ -49,14 +52,15 @@ public class FakeStoreServiceImplementation implements ProductService {
             }
             return Optional.of(product);
     }
+
     @Override
-    public Product addNewProduct(ProductDto productDto) {
-         RestTemplate restTemplate = restTemplateBuilder.build();
-         ResponseEntity<ProductDto> response = restTemplate.postForEntity("https://fakestoreapi.com/products", productDto, ProductDto.class);
-         ProductDto pd = response.getBody();
-         Product product =  getProductfromProductDto(pd);
-         return product;
+    public Product addNewProduct(Product product) {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+        ResponseEntity<ProductDto> productDtoResponseEntity = restTemplate.postForEntity("https://fakestoreapi.com/products", product, ProductDto.class);
+
+        return getProductfromProductDto(productDtoResponseEntity.getBody());
     }
+
 
     @Override
     public Product updateProduct(Long productId, Product product) {

@@ -1,6 +1,7 @@
 package dev.vikas.ProductService.Service;
 
 import dev.vikas.ProductService.DTO.ProductDto;
+import dev.vikas.ProductService.DTO.RatingDto;
 import dev.vikas.ProductService.DTO.UserDto;
 import dev.vikas.ProductService.Models.Product;
 import dev.vikas.ProductService.Repository.ProductRepository;
@@ -33,7 +34,7 @@ public class SelfProductService implements ProductService{
         return productRepository.findAll();
     }
 
-    @Override
+
     public ResponseEntity<UserDto> getfortest(){
         //RestTemplate restTemplate = new RestTemplate();
         //Here we don't have to make rest template object but to use beans of it
@@ -52,7 +53,7 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public Product addNewProduct(ProductDto productDto) {
+    public Product addNewProduct(Product product) {
         return null;
     }
 
@@ -71,7 +72,7 @@ public class SelfProductService implements ProductService{
         return false;
     }
 
-    @Override
+
     public Page<Product> getPageProduct(int numberPageableOfProduct, int offset){
         return productRepository.findAll(PageRequest.of(offset/numberPageableOfProduct, numberPageableOfProduct, Sort.by(Sort.Direction.ASC, "price")));
     }

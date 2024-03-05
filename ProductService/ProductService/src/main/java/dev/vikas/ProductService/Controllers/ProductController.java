@@ -45,6 +45,7 @@ public class ProductController {
 //    SRP and OCP voilation, instead create Interface and implement it by fakeStore and Self ProductService
    private ProductService productService;
 
+
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
@@ -67,16 +68,15 @@ public class ProductController {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>(0);
         headers.add("auth-token", "noaccess");
-        ResponseEntity<Product> resposne = new ResponseEntity(productService.getSingleProduct(productId), headers, HttpStatus.NOT_FOUND);
-        return resposne;
+        ResponseEntity<Product> response = new ResponseEntity(productService.getSingleProduct(productId), headers, HttpStatus.NOT_FOUND);
+        return response;
     }
 
     //We can return object also and accordingly it will be desialized
+    //In this method - add new product we should take productDTO but we are taking product
     @PostMapping()
-    ResponseEntity<Product> addNewProduct(@RequestBody ProductDto productDto){
-
-        ResponseEntity<Product> response = new ResponseEntity<Product>(productService.addNewProduct(productDto), null, HttpStatus.FOUND);
-        return response;
+    ResponseEntity<Product> addNewProduct(@RequestBody Product product){
+        return new ResponseEntity<>(productService.addNewProduct(product), HttpStatus.OK);
     }
 
 
