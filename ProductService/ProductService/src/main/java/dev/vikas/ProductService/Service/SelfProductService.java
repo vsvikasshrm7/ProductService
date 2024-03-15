@@ -3,10 +3,12 @@ package dev.vikas.ProductService.Service;
 import dev.vikas.ProductService.DTO.ProductDto;
 import dev.vikas.ProductService.DTO.RatingDto;
 import dev.vikas.ProductService.DTO.UserDto;
+import dev.vikas.ProductService.Exception.ProductNotFoundException;
 import dev.vikas.ProductService.Models.Product;
 import dev.vikas.ProductService.Repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Optional;
 
+@Primary
 @Service
 public class SelfProductService implements ProductService{
 
@@ -43,7 +46,7 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public Optional<Product> getSingleProduct(Long productId) {
+    public Optional<Product> getSingleProduct(Long productId) throws ProductNotFoundException{
         Optional<Product> optionalProduct = productRepository.findById(productId);
         if(!optionalProduct.isEmpty()){
             return optionalProduct;
@@ -54,7 +57,8 @@ public class SelfProductService implements ProductService{
 
     @Override
     public Product addNewProduct(Product product) {
-        return null;
+        productRepository.save(product);
+        return product;
     }
 
     @Override

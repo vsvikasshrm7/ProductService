@@ -19,6 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("select p.title from Product p where p.id =: id")
     List<Product> LaooProductWithId(Long id);
 
+    Product save(Product product);
+    Product findProductsById(Long id);
+
     @Override
     Page<Product> findAll(Pageable pageable);
 }

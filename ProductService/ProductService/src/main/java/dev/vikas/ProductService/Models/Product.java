@@ -1,11 +1,10 @@
 package dev.vikas.ProductService.Models;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ManyToAny;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +15,9 @@ public class Product extends BaseClass{
     private String title;
     private double price;
     private String description;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn
+    @Fetch(FetchMode.SELECT)
     private Category category;
     //private String category;
     private String imageUrl;

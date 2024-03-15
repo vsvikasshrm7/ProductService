@@ -1,11 +1,15 @@
 package dev.vikas.ProductService.Controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 //import dev.vikas.ProductService.ElasticSearchRepository.ProductElascticSearchRepository;
 //import dev.vikas.ProductService.ElasticSearchRepository.ProductModel;
+import dev.vikas.ProductService.Client.FakeStoreClient.FakestoreProductDto;
 import dev.vikas.ProductService.DTO.UserDto;
+import dev.vikas.ProductService.Exception.ProductNotFoundException;
+import dev.vikas.ProductService.Models.Category;
 import dev.vikas.ProductService.Service.FakeStoreServiceImplementation;
 import dev.vikas.ProductService.Service.SelfProductService;
 import org.elasticsearch.client.ElasticsearchClient;
@@ -19,14 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import dev.vikas.ProductService.DTO.ProductDto;
 import dev.vikas.ProductService.Models.Product;
@@ -58,13 +55,17 @@ public class ProductController {
 //    }
 
     @GetMapping()
-    List<Product> getAllProduct(){
+    List<ProductDto> getAllProduct(){
         List<Product> product = productService.getAllProduct();
-         return product;
+        List<ProductDto> productDto = new ArrayList<>();
+        for(Product product1 : product){
+            productDto.add(getProductDtoFromProduct(product1));
+        }
+         return productDto;
     }
 
     @GetMapping("/{productId}")
-    ResponseEntity<Product> getSingleProduct(@PathVariable("productId") Long productId){
+    ResponseEntity<Product> getSingleProduct(@PathVariable("productId") Long productId) throws ProductNotFoundException {
 
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>(0);
         headers.add("auth-token", "noaccess");
@@ -75,7 +76,8 @@ public class ProductController {
     //We can return object also and accordingly it will be desialized
     //In this method - add new product we should take productDTO but we are taking product
     @PostMapping()
-    ResponseEntity<Product> addNewProduct(@RequestBody Product product){
+    ResponseEntity<Product> addNewProduct(@RequestBody ProductDto productDto){
+        Product product = getProductfromProductDto(productDto);
         return new ResponseEntity<>(productService.addNewProduct(product), HttpStatus.OK);
     }
 
@@ -97,6 +99,23 @@ public class ProductController {
 //       return null;
 //    }
 
-
+    public ProductDto getProductDtoFromProduct(Product product){
+        ProductDto productDto1 = new ProductDto();
+        productDto1.setTitle(product.getTitle());
+        productDto1.setPrice(product.getPrice());
+        productDto1.setCategory(product.getCategory().getName());
+        return productDto1;
+    }
+    public Product getProductfromProductDto(ProductDto productDto){
+        Product product = new Product();
+        product.setTitle(productDto.getTitle());
+        product.setDescription(productDto.getDescription());
+        product.setImageUrl(productDto.getImageurl());
+        product.setPrice(productDto.getPrice());
+        Category category = new Category();
+        category.setName(productDto.getCategory());
+        product.setCategory(category);
+        return product;
+    }
 
 }
